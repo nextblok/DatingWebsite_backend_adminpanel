@@ -1,0 +1,17 @@
+============ admin panel ============
+
+/src/routes.js                               routes
+    to show in sidebar menu ,  onSidebarMenu: true
+/src/shared/apiConfig.js                     apiConfig
+/src/components/Sidebar/Sidebar.js           sidebarMenu
+
+
+/src/views/pages/Login.js                   login
+/src/views/AppUser.js                       appuser
+/src/views/Feature.js                       feature :  standard page for REST APIs
+
+
+============ backend ============
+
+File upload: upload file automatically to /uploads folder
+API for change avatar: /admin/appuser_updateAvatar (use multer to upload file)
