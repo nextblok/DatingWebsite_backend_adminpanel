@@ -23,8 +23,8 @@ import ReactTable from "components/ReactTable/ReactTable.js";
 
 const Page = ({ credential }) => {
   const FieldName = "Question"; // display name on page
-  const DetailPageLink   = "/admin/feature/"; //link to detail page, by clicking action button
-  
+  const DetailPageLink = "/admin/feature/"; //link to detail page, by clicking action button
+
   const [rows, setRows] = useState([]); //rows is the data that will be displayed in the table
   const [modalData, setModalData] = useState({}); //one row that will be edited or added in modal
   const [show1, setShow1] = useState(false); //modal for edit or add
@@ -206,21 +206,17 @@ const Page = ({ credential }) => {
                     resizable={false}
                     columns={[
                       {
-                        Header: "Name",
-                        accessor: "name",
+                        Header: "Question",
+                        accessor: "question",
                       },
                       {
-                        Header: "Label",
-                        accessor: "label",
+                        Header: "Number of Answers",
+                        accessor: "answers",
+                        Cell: (row) => (row.value ? row.value.length : 0), //get count of values, row means the accessor, row.value means the values array
                       },
                       {
                         Header: "Weight",
                         accessor: "weight",
-                      },
-                      {
-                        Header: "Values",
-                        accessor: "values",
-                        Cell: (row) => (row.value ? row.value.length : 0), //get count of values, row means the accessor, row.value means the values array
                       },
                       {
                         Header: "Actions",
@@ -262,28 +258,14 @@ const Page = ({ credential }) => {
         <div className="modal-body">
           <Form className="form-horizontal">
             <Row>
-              <Label md="3">Name</Label>
+              <Label md="3">Question</Label>
               <Col md="9">
                 <FormGroup>
                   <Input
                     type="text"
-                    value={modalData.name}
+                    value={modalData.question}
                     onChange={(e) => {
-                      setModalData({ ...modalData, name: e.target.value });
-                    }}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Label md="3">Label</Label>
-              <Col md="9">
-                <FormGroup>
-                  <Input
-                    type="text"
-                    value={modalData.label}
-                    onChange={(e) => {
-                      setModalData({ ...modalData, label: e.target.value });
+                      setModalData({ ...modalData, question: e.target.value });
                     }}
                   />
                 </FormGroup>

@@ -47,7 +47,8 @@ router.post('/user/update', maincontroller.updateUser);
 
 //like
 router.post('/like/create', maincontroller.createLike);
-router.post('/like/get', maincontroller.getLike);
+router.post('/like/get/likers', maincontroller.getLikers);
+router.post('/like/get/likees', maincontroller.getLikees);
 
 
 // user account balance
@@ -97,8 +98,9 @@ router.post('/feature/upsert', admincontroller.feature_upsert);
 
 module.exports = (app) => {
   app.use('/api', router);
+
   app.get('*', function (req, res) {
-    res.sendFile(path.resolve(__dirname, 'adminpanel/build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, './adminpanel_build', 'index.html'));
   });
 
   app.use((req, res, next) => {

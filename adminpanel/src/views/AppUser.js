@@ -435,12 +435,12 @@ const AppUser = ({ credential }) => {
                         accessor: "age",
                       },
                       {
-                        Header: "Followers",
-                        accessor: "followers",
+                        Header: "Likers",
+                        accessor: "likers",
                       },
                       {
-                        Header: "Following",
-                        accessor: "following",
+                        Header: "Likees",
+                        accessor: "likees",
                       },
                       {
                         Header: "Created At",

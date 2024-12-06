@@ -12,7 +12,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('uploads'))
-app.use(express.static(path.resolve(__dirname, 'adminpanel/build')));
+app.use(express.static(path.resolve(__dirname, './adminpanel_build')));
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, './adminpanel_build')));
 app.use(express.static('output'))
 
 require('./routes.js')(app);

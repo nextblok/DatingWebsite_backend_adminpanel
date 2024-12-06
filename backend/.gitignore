@@ -1,3 +1,5 @@
 node_modules
 # uploading files
 /uploads
+# admin panel build
+/adminpanel_build

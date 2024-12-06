@@ -14,6 +14,7 @@ const Page = ({ credential }) => {
   const [showModal, setShowModal] = useState(false); //show add/edit modal
   const [showModal2, setShowModal2] = useState(false); //show delete modal
   const [data, setData] = useState([]); // records of db
+  const [data2, setData2] = useState([]); // records of db
   const [wallet, setWallet] = useState({}); // user wallet
   const [modalData, setModalData] = useState({
     buysell: 'buy'
@@ -37,22 +38,11 @@ const Page = ({ credential }) => {
   useEffect(() => {
     (async () => {
       try {
-        let payload = { liker_id: user_id }
-
-        // var response = await ApiCall(
-        //   apiConfig.wallet_get.url,
-        //   apiConfig.wallet_get.method,
-        //   credential.loginToken,
-        //   payload
-        // );
-
-        // if (response.data.success) {
-        //   setWallet(response.data.data)
-        // }
+        let payload = { likee_id: user_id }
 
         var response = await ApiCall(
-          apiConfig.like_get.url,
-          apiConfig.like_get.method,
+          apiConfig.like_get_likers.url,
+          apiConfig.like_get_likers.method,
           credential.loginToken,
           payload
         );
@@ -62,7 +52,7 @@ const Page = ({ credential }) => {
             return {
               ...prop,
               avatar: (
-                <img src={`${prop.liked.profilePhoto}`} style={{ borderRadius: '50%', width: '40px', height: '40px' }} />
+                <img src={`${prop.liker?.profilePhoto}`} style={{ borderRadius: '50%', width: '40px', height: '40px' }} />
               ),
               actions: (
                 <div className="actions-right">
@@ -92,6 +82,59 @@ const Page = ({ credential }) => {
         }
       } catch (error) {
         notify("Failed", "danger");
+        console.log(error)
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let payload = { liker_id: user_id }
+
+        var response = await ApiCall(
+          apiConfig.like_get_likees.url,
+          apiConfig.like_get_likees.method,
+          credential.loginToken,
+          payload
+        );
+        if (response.data.success) {
+          let data = response.data.data
+          let newdata = data.map((prop, key) => {
+            return {
+              ...prop,
+              avatar: (
+                <img src={`${prop.likee?.profilePhoto}`} style={{ borderRadius: '50%', width: '40px', height: '40px' }} />
+              ),
+              actions: (
+                <div className="actions-right">
+                  <Button
+                    onClick={() => openModal(prop)}
+                    color="warning"
+                    size="sm"
+                    className={classNames("btn-icon btn-link like btn-neutral")}
+                  >
+                    <i className="tim-icons icon-pencil" />
+                  </Button>
+                  <Button
+                    onClick={() => openModal2(prop)}
+                    color="danger"
+                    size="sm"
+                    className={classNames("btn-icon btn-link like btn-neutral")}
+                  >
+                    <i className="tim-icons icon-trash-simple" />
+                  </Button>
+                </div>
+              ),
+            };
+          });
+          setData2(newdata);
+        } else {
+          notify(response.data.message ? response.data.message : 'Error', "danger");
+        }
+      } catch (error) {
+        notify("Failed", "danger");
+        console.log(error)
       }
     })();
   }, []);
@@ -178,7 +221,7 @@ const Page = ({ credential }) => {
             </CardTitle>
           </CardHeader>
           <CardBody>
-            <h6>Likes</h6>
+            <h4>Likers</h4>
             <span>Total: {data.length}</span>
 
             <ReactTable
@@ -191,35 +234,23 @@ const Page = ({ credential }) => {
                   accessor: "avatar",
                 },
                 {
-                  Header: "liked_id",
-                  accessor: "liked.fullName",
+                  Header: "Full Name",
+                  accessor: "liker.fullName",
                 },
                 {
-                  Header: "Pair",
-                  accessor: "pair",
+                  Header: "Email",
+                  accessor: "liker.email",
                 },
                 {
-                  Header: "Coin Amount",
-                  accessor: "coin_amount",
+                  Header: "Gender",
+                  accessor: "liker.gender",
                 },
-                {
-                  Header: "Buy/Sell",
-                  accessor: "buysell",
-                },
-                {
-                  Header: "Type",
-                  accessor: "type",
-                },
-                {
-                  Header: "Price",
-                  accessor: "price",
-                },
-                {
-                  Header: "Actions",
-                  accessor: "actions",
-                  sortable: false,
-                  filterable: false,
-                },
+                // {
+                //   Header: "Actions",
+                //   accessor: "actions",
+                //   sortable: false,
+                //   filterable: false,
+                // },
               ]
               }
               defaultPageSize={10}
@@ -227,7 +258,50 @@ const Page = ({ credential }) => {
               showPaginationBottom={false}
               openModal={() => openModal({ buysell: 'buy', type: 'limit' })}
               className="-striped -highlight"
-              isExport={true}
+              // isExport={true}
+            />
+
+            <br />
+            <hr />
+
+            <h4>Likees</h4>
+            <span>Total: {data2.length}</span>
+
+            <ReactTable
+              data={data2}
+              filterable
+              resizable={false}
+              columns={[
+                {
+                  Header: "Avatar",
+                  accessor: "avatar",
+                },
+                {
+                  Header: "Full Name",
+                  accessor: "likee.fullName",
+                },
+                {
+                  Header: "Email",
+                  accessor: "likee.email",
+                },
+                {
+                  Header: "Gender",
+                  accessor: "likee.gender",
+                },
+                // {
+                //   Header: "Actions",
+                //   accessor: "actions",
+                //   sortable: false,
+                //   filterable: false,
+                // },
+              ]
+              }
+              defaultPageSize={10}
+              showPaginationTop
+              showPaginationBottom={false}
+              openModal={() => openModal({ buysell: 'buy', type: 'limit' })}
+              className="-striped -highlight"
+              // isExport={true}
             />
           </CardBody>
         </Card>

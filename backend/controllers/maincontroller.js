@@ -43,9 +43,8 @@ exports.initialize = async (req, res) => {
   try {
     const seeddata = [
       {
-        name: "zodiac",
-        label: "ZODIAC SIGNS",
-        values: [
+        question: "What is your zodiac?",
+        answers: [
           "Aries",
           "Taurus",
           "Gemini",
@@ -62,9 +61,8 @@ exports.initialize = async (req, res) => {
         weight: 70,
       },
       {
-        name: "bodytype",
-        label: "Body Type",
-        values: ["Athletic", "Normal", "Other", "Stout", "Superfluous", "Thin"],
+        question: "What is your bodytype?",
+        answers: ["Athletic", "Normal", "Other", "Stout", "Superfluous", "Thin"],
         weight: 30,
       },
     ];
@@ -170,16 +168,16 @@ exports.initialize = async (req, res) => {
     for (let i = 0; i < 15; i++) {
       // Get two random users
       const liker = allUsers[Math.floor(Math.random() * allUsers.length)];
-      let liked = allUsers[Math.floor(Math.random() * allUsers.length)];
+      let likee = allUsers[Math.floor(Math.random() * allUsers.length)];
 
       // Make sure liker and liked are different users
-      while (liker._id.toString() === liked._id.toString()) {
-        liked = allUsers[Math.floor(Math.random() * allUsers.length)];
+      while (liker._id.toString() === likee._id.toString()) {
+        likee = allUsers[Math.floor(Math.random() * allUsers.length)];
       }
 
       likes.push({
-        liker_id: liker._id,
-        liked: liked._id,
+        liker: liker._id,
+        likee: likee._id,
       });
     }
 
@@ -198,9 +196,9 @@ exports.initialize = async (req, res) => {
 
 exports.createLike = async (req, res) => {
   try {
-    const { liker_id, liked_id } = req.body;
+    const { liker_id, likee_id } = req.body;
 
-    await Like.create({ liker_id, liked: liked_id });
+    await Like.create({ liker: liker_id, likee: likee_id });
 
     res.json({ success: true, message: "done" });
   } catch (error) {
@@ -208,13 +206,29 @@ exports.createLike = async (req, res) => {
   }
 };
 
-exports.getLike = async (req, res) => {
+exports.getLikers = async (req, res) => {
+  try {
+    let { likee_id } = req.body;
+    let data = [];
+    if (likee_id)
+      data = await Like.find({ likee: likee_id }, {}, { sort: { createdAt: -1 } })
+        .populate("liker")
+        .exec();
+
+    res.json({ success: true, data: data });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+
+exports.getLikees = async (req, res) => {
   try {
     let { liker_id } = req.body;
     let data = [];
     if (liker_id)
-      data = await Like.find({ liker_id }, {}, { sort: { createdAt: -1 } })
-        .populate("liked")
+      data = await Like.find({ liker: liker_id }, {}, { sort: { createdAt: -1 } })
+        .populate("likee")
         .exec();
 
     res.json({ success: true, data: data });

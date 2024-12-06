@@ -1,6 +1,6 @@
 const apiConfig = {
   initialize: { url: "/api/initialize", method: "get" },
-  
+
   authenticate: { url: "/api/login", method: "post" },
   register: { url: "/api/register", method: "post" },
   changePassword: { url: "/api/change-password", method: "post" },
@@ -126,8 +126,12 @@ const apiConfig = {
     method: "post",
   },
   //like
-  like_get: {
-    url: "/api/like/get",
+  like_get_likers: {
+    url: "/api/like/get/likers",
+    method: "post",
+  },
+  like_get_likees: {
+    url: "/api/like/get/likees",
     method: "post",
   },
 
@@ -180,7 +184,6 @@ const apiConfig = {
     url: "/api/get-wallet",
     method: "post",
   },
-
 };
 
 export default apiConfig;

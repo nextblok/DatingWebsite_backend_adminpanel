@@ -29,37 +29,32 @@ exports.login = async (req, res) => {
 exports.appuser_get = async (req, res) => {
   try {
     var { _id } = req.body;
+    // Helper function to count likes
+    const getLikeCounts = (userId, likes) => {
+      const likers = likes.filter(like => like.likee.toString() === userId.toString()).length;
+      const likees = likes.filter(like => like.liker.toString() === userId.toString()).length;
+      return { likers, likees };
+    };
+
+    const likes = await Like.find({}).lean();
     if (_id) {
-      var user = await User.findOne({ _id });
-      // Get likes data to calculate followers/following for single user
-      const likes = await Like.find({}).lean();
-      const followers = likes.filter(like => like.liked.toString() === _id.toString()).length;
-      const following = likes.filter(like => like.liker_id.toString() === _id.toString()).length;
+      var user = await User.findOne({ _id });      
       
       // Add followers and following counts to user object
       user = {
-        ...user.toObject(), // Convert mongoose doc to plain object
-        followers,
-        following
+        ...user.toObject(),
+        ...getLikeCounts(_id, likes)
       };
       
       return res.json({ result: true, data: user });
     } else {
       var users = await User.find({ role: { $ne: "admin" } }).lean(); //except admin
-
-      // Get likes data to calculate followers/following counts
-      const likes = await Like.find({}).lean();
       
       // Add followers and following counts for each user
-      users = users.map(user => {
-        const followers = likes.filter(like => like.liked.toString() === user._id.toString()).length;
-        const following = likes.filter(like => like.liker_id.toString() === user._id.toString()).length;
-        return {
-          ...user,
-          followers,
-          following
-        };
-      });
+      users = users.map(user => ({
+        ...user,
+        ...getLikeCounts(user._id, likes)
+      }));
 
       return res.json({ result: true, data: users });
     }
@@ -195,16 +190,16 @@ exports.feature_get = async (req, res) => {
 
 exports.feature_upsert = async (req, res) => {
   try {
-    const { _id, name, label, weight, values } = req.body;
+    const { _id, question, answers, weight } = req.body;
     if (_id) {
       await Feature.updateOne(
         { _id },
-        { name, label, weight, values },
+        { question, answers, weight },
         { upsert: true }
       );
       return res.json({ result: true, data: "success" });
     } else {
-      await new Feature({ name, label, weight, values }).save();
+      await new Feature({ question, answers, weight }).save();
       return res.json({ result: true, data: "success" });
     }
   } catch (error) {
