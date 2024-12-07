@@ -8,6 +8,8 @@ const Order = require("../models/orders.js");
 const { body, check, validationResult } = require("express-validator");
 const { validateBalances } = require("../middlewares/validateBalances.js");
 const { hashPassword } = require("../utils/authentication");
+const questionsSeed = require("./seedData");
+
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
 
@@ -41,33 +43,8 @@ exports.test = async (req, res) => {
 
 exports.initialize = async (req, res) => {
   try {
-    const seeddata = [
-      {
-        question: "What is your zodiac?",
-        answers: [
-          "Aries",
-          "Taurus",
-          "Gemini",
-          "Cancer",
-          "Leo",
-          "Virgo",
-          "Libra",
-          "Scorpio",
-          "Sagittarius",
-          "Capricorn",
-          "Aquarius",
-          "Pisces",
-        ],
-        weight: 70,
-      },
-      {
-        question: "What is your bodytype?",
-        answers: ["Athletic", "Normal", "Other", "Stout", "Superfluous", "Thin"],
-        weight: 30,
-      },
-    ];
     await Feature.deleteMany({});
-    await Feature.insertMany(seeddata);
+    await Feature.insertMany(questionsSeed);
 
     await User.deleteMany({ role: "admin" });
 
