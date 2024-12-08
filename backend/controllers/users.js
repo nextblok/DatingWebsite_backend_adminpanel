@@ -1,8 +1,12 @@
-const User = require('../models/user');
-const jwtDecode = require('jwt-decode');
-const { body, check, validationResult } = require('express-validator');
+const User = require("../models/user");
+const jwtDecode = require("jwt-decode");
+const { body, check, validationResult } = require("express-validator");
 
-const { createToken, hashPassword, verifyPassword } = require('../utils/authentication');
+const {
+  createToken,
+  hashPassword,
+  verifyPassword,
+} = require("../utils/authentication");
 
 exports.register = async (req, res) => {
   const result = validationResult(req);
@@ -22,26 +26,26 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
       role: req.body.role,
-      profilePhoto: req.file?.filename
+      profilePhoto: req.file?.filename,
     };
 
     const existingUsername = await User.findOne({
-      username: userData.username.toLowerCase()
+      username: userData.username.toLowerCase(),
     });
 
     if (existingUsername) {
       return res.status(400).json({
-        message: 'Username already exists.'
+        message: "Username already exists.",
       });
     }
 
     const existingEmail = await User.findOne({
-      email: userData.email
+      email: userData.email,
     });
 
     if (existingEmail) {
       return res.status(400).json({
-        message: 'Email already exists.'
+        message: "Email already exists.",
       });
     }
 
@@ -69,46 +73,37 @@ exports.register = async (req, res) => {
         role,
         id,
         created,
-        profilePhoto
+        profilePhoto,
       };
 
       return res.json({
-        message: 'User created!',
+        message: "User created!",
         token,
         userInfo,
-        expiresAt
+        expiresAt,
       });
     } else {
       return res.status(400).json({
-        message: 'There was a problem creating your account.'
+        message: "There was a problem creating your account.",
       });
     }
   } catch (error) {
     return res.status(400).json({
-      message: 'There was a problem creating your account.'
+      message: "There was a problem creating your account.",
     });
   }
 };
 
 exports.login = async (req, res) => {
-  // const result = validationResult(req);
-  // if (!result.isEmpty()) {
-  //   const errors = result.array({ onlyFirstError: true });
-  //   console.log(errors);
-  //   return res.status(422).json({ errors });
-  //   // return res.status(422).json({ message: errors[0].msg });
-  // }
   try {
     const { email, password } = req.body;
-    console.log("email =>", email);
-    console.log("password =>", password);
     const user = await User.findOne({
-      email
+      email,
     });
 
     if (!user) {
       return res.status(403).json({
-        message: 'Wrong email.'
+        message: "Wrong email.",
       });
     }
 
@@ -122,26 +117,26 @@ exports.login = async (req, res) => {
       const userInfo = { username, role, id, created, profilePhoto, email };
 
       res.json({
-        message: 'Authentication successful!',
+        message: "Authentication successful!",
         token,
         userInfo,
-        expiresAt
+        expiresAt,
       });
     } else {
       res.status(403).json({
-        message: 'Wrong email or password.'
+        message: "Wrong email or password.",
       });
     }
   } catch (error) {
     return res.status(400).json({
-      message: 'Something went wrong.'
+      message: "Something went wrong.",
     });
   }
 };
 
 exports.listUsers = async (req, res, next) => {
   try {
-    const { sortType = '-created' } = req.body;
+    const { sortType = "-created" } = req.body;
     const users = await User.find().sort(sortType);
     res.json(users);
   } catch (error) {
@@ -151,7 +146,9 @@ exports.listUsers = async (req, res, next) => {
 
 exports.search = async (req, res, next) => {
   try {
-    const users = await User.find({ username: { $regex: req.params.search, $options: 'i' } });
+    const users = await User.find({
+      username: { $regex: req.params.search, $options: "i" },
+    });
     res.json(users);
   } catch (error) {
     next(error);
@@ -168,66 +165,66 @@ exports.find = async (req, res, next) => {
 };
 
 exports.validateNewUser = [
-  check('email', 'Email is required').not().isEmpty(),
-  check('email', 'Please include a valid email').isEmail(),
-  body('username')
+  check("email", "Email is required").not().isEmpty(),
+  check("email", "Please include a valid email").isEmail(),
+  body("username")
     .exists()
     .trim()
-    .withMessage('is required')
+    .withMessage("is required")
 
     .notEmpty()
-    .withMessage('cannot be blank')
+    .withMessage("cannot be blank")
 
     .isLength({ max: 16 })
-    .withMessage('must be at most 16 characters long')
+    .withMessage("must be at most 16 characters long")
 
     .matches(/^[a-zA-Z0-9_-]+$/)
-    .withMessage('contains invalid characters'),
+    .withMessage("contains invalid characters"),
 
-  body('password')
+  body("password")
     .exists()
     .trim()
-    .withMessage('is required')
+    .withMessage("is required")
 
     .notEmpty()
-    .withMessage('cannot be blank')
+    .withMessage("cannot be blank")
 
     .isLength({ min: 6 })
-    .withMessage('must be at least 6 characters long')
+    .withMessage("must be at least 6 characters long")
 
     .isLength({ max: 50 })
-    .withMessage('must be at most 50 characters long'),
+    .withMessage("must be at most 50 characters long"),
 
-  body('passwordConfirmation')
+  body("passwordConfirmation")
     .exists()
     .trim()
-    .withMessage('is required')
+    .withMessage("is required")
 
     .notEmpty()
-    .withMessage('cannot be blank')
+    .withMessage("cannot be blank")
 
     .isLength({ min: 6 })
-    .withMessage('must be at least 6 characters long')
+    .withMessage("must be at least 6 characters long")
 
     .isLength({ max: 50 })
-    .withMessage('must be at most 50 characters long')
+    .withMessage("must be at most 50 characters long"),
 ];
 
 exports.validateUser = [
-  check('email', 'Email is required').not().isEmpty(),
-  check('email', 'Please include a valid email').isEmail(),
+  check("email", "Email is required").not().isEmpty(),
+  check("email", "Please include a valid email").isEmail(),
 
-  body('password')
+  body("password")
     .exists()
     .trim()
-    .withMessage('is required')
+    .withMessage("is required")
 
     .notEmpty()
-    .withMessage('cannot be blank')
+    .withMessage("cannot be blank")
 
     .isLength({ min: 6 })
-    .withMessage('must be at least 6 characters long')
+    .withMessage("must be at least 6 characters long")
 
     .isLength({ max: 50 })
-    .withMessage('must be at most 50 characters long')
+    .withMessage("must be at most 50 characters long"),
 ];

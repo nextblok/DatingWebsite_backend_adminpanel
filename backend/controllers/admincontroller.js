@@ -1,9 +1,6 @@
 const User = require("../models/user");
 const Like = require("../models/like");
 const Feature = require("../models/feature");
-const Account = require("../models/account.js");
-const Withdraw = require("../models/withdraw.js");
-const Order = require("../models/orders.js");
 const { body, check, validationResult } = require("express-validator");
 const {
   createToken,
@@ -79,16 +76,7 @@ exports.appuser_upsert = async (req, res) => {
 
       var hashedPassword = await hashPassword("123456");
       input.password = hashedPassword;
-      input.balance = {
-        BTC: 0,
-        ETH: 0,
-        USDT: 0,
-        USDC: 0,
-        BNB: 0,
-        SHIB: 0,
-        DOGE: 0,
-        YFI: 0,
-      };
+    
       await new User(input).save();
       return res.json({ result: true, data: "success" });
     }
