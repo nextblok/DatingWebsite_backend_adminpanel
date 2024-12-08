@@ -4,7 +4,7 @@ const Feature = require("../models/feature.js");
 
 const { body, check, validationResult } = require("express-validator");
 const { hashPassword } = require("../utils/authentication");
-const questionsSeed = require("./seedData");
+const { questionsSeed, usersSeed } = require("./seedData");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -57,83 +57,13 @@ exports.initialize = async (req, res) => {
       await User.create(adminData);
     }
 
-    const users = [
-      {
-        email: "sarah@gmail.com",
-        password: hashedPassword,
-        fullName: "Sarah Johnson",
-        age: 28,
-        gender: "female",
-        profilePhoto: "https://randomuser.me/api/portraits/women/31.jpg",
-        role: "user",
-      },
-      {
-        email: "emma@gmail.com",
-        password: hashedPassword,
-        fullName: "Emma Wilson",
-        age: 24,
-        gender: "female",
-        profilePhoto: "https://randomuser.me/api/portraits/women/35.jpg",
-        role: "user",
-      },
-      {
-        email: "olivia@gmail.com",
-        password: hashedPassword,
-        fullName: "Olivia Davis",
-        age: 26,
-        gender: "female",
-        profilePhoto: "https://randomuser.me/api/portraits/women/42.jpg",
-        role: "user",
-      },
-      {
-        email: "sophia@gmail.com",
-        password: hashedPassword,
-        fullName: "Sophia Miller",
-        age: 29,
-        gender: "female",
-        profilePhoto: "https://randomuser.me/api/portraits/women/57.jpg",
-        role: "user",
-      },
-      {
-        email: "james@gmail.com",
-        password: hashedPassword,
-        fullName: "James Smith",
-        age: 30,
-        gender: "male",
-        profilePhoto: "https://randomuser.me/api/portraits/men/46.jpg",
-        role: "user",
-      },
-      {
-        email: "michael@gmail.com",
-        password: hashedPassword,
-        fullName: "Michael Brown",
-        age: 27,
-        gender: "male",
-        profilePhoto: "https://randomuser.me/api/portraits/men/3.jpg",
-        role: "user",
-      },
-      {
-        email: "william@gmail.com",
-        password: hashedPassword,
-        fullName: "William Taylor",
-        age: 32,
-        gender: "male",
-        profilePhoto: "https://randomuser.me/api/portraits/men/22.jpg",
-        role: "user",
-      },
-      {
-        email: "daniel@gmail.com",
-        password: hashedPassword,
-        fullName: "Daniel Anderson",
-        age: 29,
-        gender: "male",
-        profilePhoto: "https://randomuser.me/api/portraits/men/15.jpg",
-        role: "user",
-      },
-    ];
+    usersSeed = usersSeed.map(user => ({
+      ...user,
+      password: hashedPassword
+    }));
 
     await User.deleteMany({ role: "user" });
-    await User.insertMany(users);
+    await User.insertMany(usersSeed);
 
     // Generate 10 random likes between users
     const allUsers = await User.find({ role: "user" });

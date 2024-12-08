@@ -103,7 +103,8 @@ exports.login = async (req, res) => {
 
     if (!user) {
       return res.status(403).json({
-        message: "Wrong email.",
+        success: false,
+        message: "Wrong email",
       });
     }
 
@@ -113,10 +114,11 @@ exports.login = async (req, res) => {
       const token = createToken(user);
       const decodedToken = jwtDecode(token);
       const expiresAt = decodedToken.exp;
-      const { username, role, id, created, profilePhoto, email } = user;
-      const userInfo = { username, role, id, created, profilePhoto, email };
+      const { fullName, role, id, created, profilePhoto, email } = user;
+      const userInfo = { fullName, role, id, created, profilePhoto, email };
 
       res.json({
+        success: true,
         message: "Authentication successful!",
         token,
         userInfo,
@@ -124,11 +126,13 @@ exports.login = async (req, res) => {
       });
     } else {
       res.status(403).json({
+        success: false,
         message: "Wrong email or password.",
       });
     }
   } catch (error) {
     return res.status(400).json({
+      success: false,
       message: "Something went wrong.",
     });
   }
@@ -138,7 +142,10 @@ exports.listUsers = async (req, res, next) => {
   try {
     const { sortType = "-created" } = req.body;
     const users = await User.find().sort(sortType);
-    res.json(users);
+    res.json({
+      success: true,
+      users,
+    });
   } catch (error) {
     next(error);
   }
@@ -149,7 +156,10 @@ exports.search = async (req, res, next) => {
     const users = await User.find({
       username: { $regex: req.params.search, $options: "i" },
     });
-    res.json(users);
+    res.json({
+      success: true,
+      users,
+    });
   } catch (error) {
     next(error);
   }
@@ -158,7 +168,10 @@ exports.search = async (req, res, next) => {
 exports.find = async (req, res, next) => {
   try {
     const users = await User.findOne({ username: req.params.username });
-    res.json(users);
+    res.json({
+      success: true,
+      users,
+    });
   } catch (error) {
     next(error);
   }

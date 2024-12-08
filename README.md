@@ -58,3 +58,17 @@
 - During development, adminpanel runs on port 3000 with proxy to backend port 8000
 - For production, build files are served directly from backend server
 
+
+## Seed Data Guide
+
+### Overview
+The backend includes seed data functionality for initializing the database with sample users and features/questions.
+
+### Seed Data Files
+- `/backend/controllers/seedData.js` - Contains question data array
+- `/backend/controllers/maincontroller.js` - Handles database initialization
+
+### Initialization
+- Initialize database with seed data via `/api/initialize` endpoint
+
+
