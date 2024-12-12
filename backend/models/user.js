@@ -15,7 +15,6 @@ const userModel = new Schema({
     enum: ['male', 'female', 'transgender'],
   },
   bio: { type: String },
-  self: { type: Object }, 
   preference: { type: Object },
 
   role: { type: String, required: true, default: 'user' },

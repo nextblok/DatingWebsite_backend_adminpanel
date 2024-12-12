@@ -57,9 +57,9 @@ exports.initialize = async (req, res) => {
       await User.create(adminData);
     }
 
-    usersSeed = usersSeed.map(user => ({
+    usersSeed = usersSeed.map((user) => ({
       ...user,
-      password: hashedPassword
+      password: hashedPassword,
     }));
 
     await User.deleteMany({ role: "user" });
@@ -114,7 +114,11 @@ exports.getLikers = async (req, res) => {
     let { likee_id } = req.body;
     let data = [];
     if (likee_id)
-      data = await Like.find({ likee: likee_id }, {}, { sort: { createdAt: -1 } })
+      data = await Like.find(
+        { likee: likee_id },
+        {},
+        { sort: { createdAt: -1 } }
+      )
         .populate("liker")
         .exec();
 
@@ -124,13 +128,16 @@ exports.getLikers = async (req, res) => {
   }
 };
 
-
 exports.getLikees = async (req, res) => {
   try {
     let { liker_id } = req.body;
     let data = [];
     if (liker_id)
-      data = await Like.find({ liker: liker_id }, {}, { sort: { createdAt: -1 } })
+      data = await Like.find(
+        { liker: liker_id },
+        {},
+        { sort: { createdAt: -1 } }
+      )
         .populate("likee")
         .exec();
 
@@ -157,7 +164,7 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { user_id, fullName, age, gender, bio, self, preference } = req.body;
+    const { user_id, fullName, age, gender, bio, preference } = req.body;
 
     await User.updateOne(
       { _id: user_id },
@@ -166,9 +173,14 @@ exports.updateUser = async (req, res) => {
         age,
         gender,
         bio,
-        self: JSON.parse(self),
-        preference: JSON.parse(preference),
-        // preference: { "abc": [0, 1], "456": [2] }
+        preference,
+        // preference: {
+        //     "675642fbf9873c01577f0c56": 0,
+        //     "675642fbf9873c01577f0c57": 1,
+        //     "675642fbf9873c01577f0c83": 2,
+        //     "675642fbf9873c01577f0c84": 2,
+        //     "675642fbf9873c01577f0c87": 3
+        // }
       },
       { upsert: true, runValidators: true }
     );
@@ -208,4 +220,3 @@ const getMatchingScore = async (from_user_id, to_user_id) => {
     return 0;
   }
 };
-
