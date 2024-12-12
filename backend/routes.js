@@ -9,6 +9,7 @@ const {
 } = require('./controllers/users.js');
 const maincontroller = require('./controllers/maincontroller.js');
 const admincontroller = require('./controllers/admincontroller');
+const chatcontroller = require('./controllers/chatcontroller.js');
 
 const requireAuth = require('./middlewares/requireAuth');
 
@@ -41,6 +42,10 @@ router.post('/login', validateUser, login);
 //user  
 router.post('/user/get', maincontroller.getUser);
 router.post('/user/update', maincontroller.updateUser);
+
+//chat
+router.post('/chat/get', chatcontroller.getChats);
+router.post('/chat/getList', chatcontroller.getChatList);
 
 //like
 router.post('/like/create', maincontroller.createLike);

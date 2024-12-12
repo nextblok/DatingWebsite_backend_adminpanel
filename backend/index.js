@@ -2,6 +2,8 @@ const app = require("./app.js");
 const mongoose = require("mongoose");
 const config = require("./config.js");
 
+require("./websocket.js"); // Socket.io connection handling
+
 const connect = url => {
   return mongoose.connect(url, config.db.options, () => console.log("*Connected to", url));
 };
