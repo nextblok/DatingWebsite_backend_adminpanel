@@ -5,7 +5,7 @@ const Chatcontroller = require("./controllers/chatcontroller.js");
 const server = http.createServer();
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000", // Allow this origin
+        origin: ["http://localhost:3000", "http://104.236.35.101"], // Allow these origins
         methods: ["GET", "POST"],       // Allow these HTTP methods
         allowedHeaders: ["my-custom-header"], // Optional: Specify allowed headers
         credentials: true               // Optional: Allow credentials like cookies
