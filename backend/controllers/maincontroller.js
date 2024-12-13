@@ -57,7 +57,7 @@ exports.initialize = async (req, res) => {
       await User.create(adminData);
     }
 
-    const usersSeedClone = [...usersSeed];
+    let usersSeedClone = [...usersSeed];
     usersSeedClone = usersSeedClone.map((user) => ({
       ...user,
       password: hashedPassword,
