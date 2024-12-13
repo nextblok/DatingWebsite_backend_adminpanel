@@ -57,13 +57,14 @@ exports.initialize = async (req, res) => {
       await User.create(adminData);
     }
 
-    usersSeed = usersSeed.map((user) => ({
+    const usersSeedClone = [...usersSeed];
+    usersSeedClone = usersSeedClone.map((user) => ({
       ...user,
       password: hashedPassword,
     }));
 
     await User.deleteMany({ role: "user" });
-    await User.insertMany(usersSeed);
+    await User.insertMany(usersSeedClone);
 
     // Generate 10 random likes between users
     const allUsers = await User.find({ role: "user" });
