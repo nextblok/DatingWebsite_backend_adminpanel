@@ -24,6 +24,7 @@ const userModel = new Schema({
       return `https://secure.gravatar.com/avatar/${this._id}?s=90&d=identicon`;
     }
   },
+  blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'user' }],
 }, { timestamps: true });
 
 userModel.set('toJSON', { getters: true });

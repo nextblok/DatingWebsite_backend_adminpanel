@@ -46,6 +46,8 @@ router.post('/user/update', maincontroller.updateUser);
 //chat
 router.post('/chat/get', chatcontroller.getChats);
 router.post('/chat/getList', chatcontroller.getChatList);
+router.post('/chat/blockUser', chatcontroller.blockUser);
+router.post('/chat/remove', chatcontroller.removeChatBetweenUsers);
 
 //like
 router.post('/like/create', maincontroller.createLike);
