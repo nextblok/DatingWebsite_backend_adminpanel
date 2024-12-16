@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Like = require("../models/like");
 const Feature = require("../models/feature");
+const Criteria = require("../models/criteria");
 const { body, check, validationResult } = require("express-validator");
 const {
   createToken,
@@ -194,3 +195,14 @@ exports.feature_upsert = async (req, res) => {
     return res.json({ result: false, data: error.message });
   }
 };
+
+
+exports.criteria_get = async (req, res) => {
+  try {
+    const criteria = await Criteria.find();
+    return res.json({ result: true, data: criteria });
+  } catch (error) {
+    return res.json({ result: false, data: error.message });
+  }
+};
+

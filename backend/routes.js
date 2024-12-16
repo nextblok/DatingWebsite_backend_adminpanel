@@ -42,6 +42,7 @@ router.post('/login', validateUser, login);
 //user  
 router.post('/user/get', maincontroller.getUser);
 router.post('/user/update', maincontroller.updateUser);
+router.post('/user/search', maincontroller.searchUser);
 
 //chat
 router.post('/chat/get', chatcontroller.getChats);
@@ -71,6 +72,7 @@ router.post('/appuser/export', [], admincontroller.appuser_export);
 router.post('/appuser/changePassword', [], admincontroller.appuser_changePassword);
 router.post('/feature/get', admincontroller.feature_get);
 router.post('/feature/upsert', admincontroller.feature_upsert);
+router.post('/criteria/get', admincontroller.criteria_get);
 
 module.exports = (app) => {
   app.use('/api', router);

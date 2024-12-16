@@ -3,7 +3,7 @@ const usersSeed = [
     email: "sarah@gmail.com",
     fullName: "Sarah Johnson",
     age: 28,
-    gender: "female",
+    gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/31.jpg",
     role: "user",
   },
@@ -11,7 +11,7 @@ const usersSeed = [
     email: "emma@gmail.com",
     fullName: "Emma Wilson",
     age: 24,
-    gender: "female",
+    gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/35.jpg",
     role: "user",
   },
@@ -19,7 +19,7 @@ const usersSeed = [
     email: "olivia@gmail.com",
     fullName: "Olivia Davis",
     age: 26,
-    gender: "female",
+    gender: "Transgender",
     profilePhoto: "https://randomuser.me/api/portraits/women/42.jpg",
     role: "user",
   },
@@ -27,7 +27,7 @@ const usersSeed = [
     email: "sophia@gmail.com",
     fullName: "Sophia Miller",
     age: 29,
-    gender: "female",
+    gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/57.jpg",
     role: "user",
   },
@@ -35,7 +35,7 @@ const usersSeed = [
     email: "james@gmail.com",
     fullName: "James Smith",
     age: 30,
-    gender: "male",
+    gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/46.jpg",
     role: "user",
   },
@@ -43,7 +43,7 @@ const usersSeed = [
     email: "michael@gmail.com",
     fullName: "Michael Brown",
     age: 27,
-    gender: "male",
+    gender: "Transgender",
     profilePhoto: "https://randomuser.me/api/portraits/men/3.jpg",
     role: "user",
   },
@@ -51,7 +51,7 @@ const usersSeed = [
     email: "william@gmail.com",
     fullName: "William Taylor",
     age: 32,
-    gender: "male",
+    gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/22.jpg",
     role: "user",
   },
@@ -59,7 +59,7 @@ const usersSeed = [
     email: "daniel@gmail.com",
     fullName: "Daniel Anderson",
     age: 29,
-    gender: "male",
+    gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/15.jpg",
     role: "user",
   },
@@ -372,4 +372,31 @@ const questionsSeed = [
   },
 ];
 
-module.exports = { questionsSeed, usersSeed };
+const criteriaSeed = [
+  {
+    question: "Status",
+    answers: ["Single", "Divorce", "Married", "Widow/Widower", "Situationship"],
+  },
+  {
+    question: "Sexual Orientation",
+    answers: ["Straight", "Gay/Lesbian/Bi"],
+  },
+  {
+    question: "Race",
+    answers: ["Caucasian", "Black/African descent", "Latin/Hispanic", "Asian", "Indian", "Other"],
+  },
+  {
+    question: "Height",
+    answers: ["4-5ft", "5-6ft", "6-7ft"],
+  },
+  {
+    question: "Body type",
+    answers: ["Slim", "Average", "Fit", "Superfluous"],
+  },
+  {
+    question: "Religion",
+    answers: ["Christian", "Jewish", "Muslim", "Buddhist", "Other", "Non practicing"],
+  },
+];
+
+module.exports = { questionsSeed, usersSeed, criteriaSeed };

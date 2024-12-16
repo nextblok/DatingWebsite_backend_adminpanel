@@ -12,9 +12,10 @@ const userModel = new Schema({
   age: { type: Number },
   gender: {
     type: String,
-    enum: ['male', 'female', 'transgender'],
+    enum: ['Male', 'Female', 'Transgender'],
   },
   bio: { type: String },
+  criteria: { type: Object },
   preference: { type: Object },
 
   role: { type: String, required: true, default: 'user' },

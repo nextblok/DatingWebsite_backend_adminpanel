@@ -1,10 +1,12 @@
 const User = require("../models/user");
 const Like = require("../models/like.js");
 const Feature = require("../models/feature.js");
+const Criteria = require("../models/criteria.js");
+const Chat = require("../models/chat.js");
 
 const { body, check, validationResult } = require("express-validator");
 const { hashPassword } = require("../utils/authentication");
-const { questionsSeed, usersSeed } = require("./seedData");
+const { questionsSeed, usersSeed, criteriaSeed } = require("./seedData");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -41,6 +43,9 @@ exports.initialize = async (req, res) => {
   try {
     await Feature.deleteMany({});
     await Feature.insertMany(questionsSeed);
+
+    await Criteria.deleteMany({});
+    await Criteria.insertMany(criteriaSeed);
 
     await User.deleteMany({ role: "admin" });
 
@@ -88,10 +93,42 @@ exports.initialize = async (req, res) => {
     await Like.deleteMany({}); // Clear existing likes
     await Like.insertMany(likes);
 
+    // Generate some chat messages between first 2 users
+    const firstTwoUsers = allUsers.slice(0, 2);
+    const chatMessages = [
+      {
+        sender: firstTwoUsers[0]._id,
+        receiver: firstTwoUsers[1]._id,
+        message: "Hey, how are you?",
+        createdAt: new Date(Date.now() - 3600000), // 1 hour ago
+      },
+      {
+        sender: firstTwoUsers[1]._id,
+        receiver: firstTwoUsers[0]._id,
+        message: "I'm good thanks! How about you?",
+        createdAt: new Date(Date.now() - 3000000), // 50 mins ago
+      },
+      {
+        sender: firstTwoUsers[0]._id,
+        receiver: firstTwoUsers[1]._id,
+        message: "Doing great! Would you like to grab coffee sometime?",
+        createdAt: new Date(Date.now() - 2400000), // 40 mins ago
+      },
+      {
+        sender: firstTwoUsers[1]._id,
+        receiver: firstTwoUsers[0]._id,
+        message: "Sure, that sounds lovely!",
+        createdAt: new Date(Date.now() - 1800000), // 30 mins ago
+      },
+    ];
+
+    await Chat.deleteMany({}); // Clear existing chats
+    await Chat.insertMany(chatMessages);
+
     res.json({
       success: true,
       message:
-        "1) admin account created (admin@gmail.com, 12345) and 2) seed for users , features, likes",
+        "1) admin account created (admin@gmail.com, 12345) and 2) seed for users , features, likes, criteria, chat messages",
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -103,7 +140,10 @@ exports.createLike = async (req, res) => {
     const { liker_id, likee_id } = req.body;
 
     // Check if like already exists
-    const existingLike = await Like.findOne({ liker: liker_id, likee: likee_id });
+    const existingLike = await Like.findOne({
+      liker: liker_id,
+      likee: likee_id,
+    });
     if (existingLike) {
       return res.json({ result: false, message: "Like already exists" });
     }
@@ -128,7 +168,7 @@ exports.deleteLike = async (req, res) => {
   try {
     const { liker_id, likee_id } = req.body;
 
-   await Like.deleteMany({ liker: liker_id, likee: likee_id });
+    await Like.deleteMany({ liker: liker_id, likee: likee_id });
 
     res.json({ result: true, message: "done" });
   } catch (error) {
@@ -191,7 +231,8 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { user_id, fullName, age, gender, bio, preference } = req.body;
+    const { user_id, fullName, age, gender, bio, criteria, preference } =
+      req.body;
 
     await User.updateOne(
       { _id: user_id },
@@ -200,6 +241,7 @@ exports.updateUser = async (req, res) => {
         age,
         gender,
         bio,
+        criteria,
         preference,
         // preference: {
         //     "675642fbf9873c01577f0c56": 0,
@@ -213,6 +255,51 @@ exports.updateUser = async (req, res) => {
     );
 
     res.json({ success: true, message: "done" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.searchUser = async (req, res) => {
+  try {
+    const { gender, age, criteria } = req.body;
+    let query = {
+      $and: [
+        { role: "user" }
+      ]
+    };
+
+    // Gender filter
+    if (gender && Array.isArray(gender) && gender.length > 0) {
+      query.$and.push({ gender: { $in: gender } });
+    }
+
+    // Age filter with multiple ranges 
+    if (age && Array.isArray(age) && age.length > 0) {
+      query.$and.push({
+        $or: age.map((range) => ({
+          age: { $gte: range.min, $lte: range.max }
+        }))
+      });
+    }
+    // Criteria filter
+    let users = await User.find(query);
+    console.log(users);
+
+    if (criteria && typeof criteria === "object") {
+      users = users.filter((user) => {
+        // Check each criteria
+        return Object.entries(criteria).every(([criteriaId, allowedValues]) => {
+          if (allowedValues.length === 0) return true;
+          // Get user's value for this criteria
+          const userValue = user.criteria ? user.criteria[criteriaId] : null;
+          // Check if user's value is in allowed values
+          return allowedValues.includes(userValue);
+        });
+      });
+    }
+
+    return res.json({ success: true, data: users });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
