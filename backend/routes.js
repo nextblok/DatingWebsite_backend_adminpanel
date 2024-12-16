@@ -51,6 +51,7 @@ router.post('/chat/remove', chatcontroller.removeChatBetweenUsers);
 
 //like
 router.post('/like/create', maincontroller.createLike);
+router.post('/like/delete', maincontroller.deleteLike);
 router.post('/like/get/likers', maincontroller.getLikers);
 router.post('/like/get/likees', maincontroller.getLikees);
 

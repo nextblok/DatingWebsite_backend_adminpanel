@@ -102,11 +102,37 @@ exports.createLike = async (req, res) => {
   try {
     const { liker_id, likee_id } = req.body;
 
+    // Check if like already exists
+    const existingLike = await Like.findOne({ liker: liker_id, likee: likee_id });
+    if (existingLike) {
+      return res.json({ result: false, message: "Like already exists" });
+    }
+
+    // Check if users exist
+    const liker = await User.findById(liker_id);
+    const likee = await User.findById(likee_id);
+    console.log(liker, likee);
+    if (!liker || !likee) {
+      return res.json({ result: false, message: "User not found" });
+    }
+
     await Like.create({ liker: liker_id, likee: likee_id });
 
-    res.json({ success: true, message: "done" });
+    res.json({ result: true, message: "done" });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ result: false, message: error.message });
+  }
+};
+
+exports.deleteLike = async (req, res) => {
+  try {
+    const { liker_id, likee_id } = req.body;
+
+   await Like.deleteMany({ liker: liker_id, likee: likee_id });
+
+    res.json({ result: true, message: "done" });
+  } catch (error) {
+    res.status(400).json({ result: false, message: error.message });
   }
 };
 
