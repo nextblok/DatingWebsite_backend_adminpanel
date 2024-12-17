@@ -219,13 +219,37 @@ exports.getUser = async (req, res) => {
     const { user_id, watcher_id } = req.body;
 
     const user = await User.findOne({ _id: user_id }).lean(); // lean() for converting mongoose model to plain object to assign "matchingscore" field
-
+    const watcher = await User.findOne({ _id: watcher_id });
+    if (!watcher) {
+      return res.json({ success: false, message: "Watcher not found" });
+    }
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
     if (watcher_id)
       user.matchingscore = await getMatchingScore(watcher_id, user_id);
+
+    user.likeStatus = await getLikeStatus(watcher_id, user_id);
 
     return res.json({ success: true, data: user });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+const getLikeStatus = async (liker_id, likee_id) => {
+  try {
+    const like = await Like.findOne({ liker: liker_id, likee: likee_id });
+    const mutualLike = await Like.findOne({ liker: likee_id, likee: liker_id });
+    return {
+      liked: like ? true : false,
+      mutual: like && mutualLike ? true : false,
+    };
+  } catch (error) {
+    return {
+      liked: false,
+      mutual: false,
+    };
   }
 };
 
@@ -264,9 +288,7 @@ exports.searchUser = async (req, res) => {
   try {
     const { gender, age, criteria } = req.body;
     let query = {
-      $and: [
-        { role: "user" }
-      ]
+      $and: [{ role: "user" }],
     };
 
     // Gender filter
@@ -274,12 +296,12 @@ exports.searchUser = async (req, res) => {
       query.$and.push({ gender: { $in: gender } });
     }
 
-    // Age filter with multiple ranges 
+    // Age filter with multiple ranges
     if (age && Array.isArray(age) && age.length > 0) {
       query.$and.push({
         $or: age.map((range) => ({
-          age: { $gte: range.min, $lte: range.max }
-        }))
+          age: { $gte: range.min, $lte: range.max },
+        })),
       });
     }
     // Criteria filter
