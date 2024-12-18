@@ -202,7 +202,7 @@ exports.getLikees = async (req, res) => {
   try {
     let { liker_id } = req.body;
     let data = [];
-    if (liker_id)
+    if (liker_id) {
       data = await Like.find(
         { liker: liker_id },
         {},
@@ -210,6 +210,16 @@ exports.getLikees = async (req, res) => {
       )
         .populate("likee")
         .exec();
+      // Map data and add mutual like status for each likee
+      data = await Promise.all(data.map(async (like) => {
+        const mutualLike = await Like.findOne({ liker: like.likee._id, likee: liker_id });
+        like = like.toObject(); // Convert to plain object to add new field
+        like.mutual = mutualLike ? true : false;
+        return like;
+      }));
+
+        
+    }
 
     res.json({ success: true, data: data });
   } catch (error) {
@@ -275,12 +285,14 @@ exports.updateUser = async (req, res) => {
       gender,
       bio,
       criteria,
-      preference
+      preference,
     };
 
     // Filter out null/undefined values
-    Object.keys(updateFields).forEach(key => 
-      (updateFields[key] == null || updateFields[key] === undefined) && delete updateFields[key]
+    Object.keys(updateFields).forEach(
+      (key) =>
+        (updateFields[key] == null || updateFields[key] === undefined) &&
+        delete updateFields[key]
     );
     await User.updateOne(
       { _id: user_id },
@@ -360,14 +372,17 @@ const getMatchingScore = async (from_user_id, to_user_id) => {
     const features = await Feature.find();
     let matchCount = 0;
 
-    // Get user's criteria answers and preferences
+    // Get user's preferences
     const fromUserPreference = from_user.preference || {};
     const toUserPreference = to_user.preference || {};
 
     // Count how many answers match between users
-    features.forEach(feature => {
+    features.forEach((feature) => {
       const questionId = feature._id.toString();
-      if (!fromUserPreference.hasOwnProperty(questionId) || !toUserPreference.hasOwnProperty(questionId)) {
+      if (
+        !fromUserPreference.hasOwnProperty(questionId) ||
+        !toUserPreference.hasOwnProperty(questionId)
+      ) {
         return;
       }
       const fromUserAnswer = fromUserPreference[questionId];
