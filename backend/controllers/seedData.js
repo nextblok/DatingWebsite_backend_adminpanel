@@ -1,67 +1,83 @@
 const usersSeed = [
   {
     email: "sarah@gmail.com",
-    fullName: "Sarah Johnson",
+    fullName: "Sarah Johnson", 
     age: 28,
+    birthdate: "1996-02-15",
     gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/31.jpg",
     role: "user",
+    bio: "Adventure seeker and coffee enthusiast. Love hiking, photography, and trying new restaurants. Looking for someone who shares my passion for life and exploration!"
   },
   {
     email: "emma@gmail.com",
     fullName: "Emma Wilson",
     age: 24,
+    birthdate: "2000-05-20", 
     gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/35.jpg",
     role: "user",
+    bio: "Bookworm and aspiring chef. When I'm not reading or experimenting in the kitchen, you can find me at local music venues. Seeking someone who appreciates good food and thoughtful conversations."
   },
   {
-    email: "olivia@gmail.com",
+    email: "olivia@gmail.com", 
     fullName: "Olivia Davis",
     age: 26,
+    birthdate: "1998-09-10",
     gender: "Transgender",
     profilePhoto: "https://randomuser.me/api/portraits/women/42.jpg",
     role: "user",
+    bio: "Art teacher by day, painter by night. Passionate about self-expression and creativity. Looking for someone open-minded who can appreciate both the canvas and the artist."
   },
   {
     email: "sophia@gmail.com",
     fullName: "Sophia Miller",
     age: 29,
+    birthdate: "1995-03-25",
     gender: "Female",
     profilePhoto: "https://randomuser.me/api/portraits/women/57.jpg",
     role: "user",
+    bio: "Yoga instructor and wellness advocate. Believe in maintaining balance in life. Seeking a partner who values personal growth and healthy living as much as I do."
   },
   {
     email: "james@gmail.com",
     fullName: "James Smith",
     age: 30,
+    birthdate: "1994-07-12",
     gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/46.jpg",
     role: "user",
+    bio: "Software engineer with a love for outdoor adventures. When not coding, I'm either rock climbing or planning my next hiking trip. Looking for someone to share these adventures with."
   },
   {
     email: "michael@gmail.com",
     fullName: "Michael Brown",
     age: 27,
+    birthdate: "1997-11-30",
     gender: "Transgender",
     profilePhoto: "https://randomuser.me/api/portraits/men/3.jpg",
     role: "user",
+    bio: "Music producer and amateur astronomer. Fascinated by both the beats of music and the mysteries of the universe. Seeking someone who can appreciate life's different rhythms."
   },
   {
     email: "william@gmail.com",
     fullName: "William Taylor",
     age: 32,
+    birthdate: "1992-04-05",
     gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/22.jpg",
     role: "user",
+    bio: "Environmental lawyer fighting for a better planet. Love cycling, gardening, and reducing my carbon footprint. Looking for someone who shares my passion for sustainability."
   },
   {
     email: "daniel@gmail.com",
     fullName: "Daniel Anderson",
     age: 29,
+    birthdate: "1995-08-18",
     gender: "Male",
     profilePhoto: "https://randomuser.me/api/portraits/men/15.jpg",
     role: "user",
+    bio: "Professional chef who loves traveling and discovering new cuisines. Always ready for spontaneous food adventures. Seeking a fellow foodie who enjoys culinary exploration."
   },
 ];
 

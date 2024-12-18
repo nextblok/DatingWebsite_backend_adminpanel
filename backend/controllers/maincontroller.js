@@ -7,7 +7,10 @@ const Chat = require("../models/chat.js");
 const { body, check, validationResult } = require("express-validator");
 const { hashPassword } = require("../utils/authentication");
 const { questionsSeed, usersSeed, criteriaSeed } = require("./seedData");
-const { emitNotificationForChat, emitNotificationForLike } = require("./socketController");
+const {
+  emitNotificationForChat,
+  emitNotificationForLike,
+} = require("./socketController");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -155,7 +158,7 @@ exports.createLike = async (req, res) => {
     }
 
     await Like.create({ liker: liker_id, likee: likee_id });
-    
+
     res.json({ result: true, message: "done" });
 
     await emitNotificationForLike(liker_id, likee_id);
@@ -220,7 +223,7 @@ exports.getUser = async (req, res) => {
 
     const user = await User.findOne({ _id: user_id }).lean(); // lean() for converting mongoose model to plain object to assign "matchingscore" field
     const watcher = await User.findOne({ _id: watcher_id });
-    if (!watcher) {
+    if (watcher_id && !watcher) {
       return res.json({ success: false, message: "Watcher not found" });
     }
     if (!user) {
@@ -255,13 +258,35 @@ const getLikeStatus = async (liker_id, likee_id) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { user_id, fullName, age, gender, bio, criteria, preference } =
+    const { user_id, fullName, gender, bio, criteria, preference, birthdate } =
       req.body;
 
+    const age = birthdate
+      ? Math.floor(
+          (new Date() - new Date(birthdate)) / (365.25 * 24 * 60 * 60 * 1000)
+        )
+      : null;
+
+    // Remove null values from the update fields
+    const updateFields = {
+      fullName,
+      birthdate,
+      age,
+      gender,
+      bio,
+      criteria,
+      preference
+    };
+
+    // Filter out null/undefined values
+    Object.keys(updateFields).forEach(key => 
+      (updateFields[key] == null || updateFields[key] === undefined) && delete updateFields[key]
+    );
     await User.updateOne(
       { _id: user_id },
       {
         fullName,
+        birthdate,
         age,
         gender,
         bio,

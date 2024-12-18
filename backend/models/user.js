@@ -9,6 +9,7 @@ const userModel = new Schema({
   },
   password: { type: String, required: true },
   fullName: { type: String },
+  birthdate: { type: Date },
   age: { type: Number },
   gender: {
     type: String,
