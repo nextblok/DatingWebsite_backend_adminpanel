@@ -357,25 +357,32 @@ const getMatchingScore = async (from_user_id, to_user_id) => {
     const from_user = await User.findOne({ _id: from_user_id });
     const to_user = await User.findOne({ _id: to_user_id });
 
-    //get total weight of features
-    const result = await Feature.aggregate([
-      { $group: { _id: null, total: { $sum: `$weight` } } },
-    ]);
-    const totalWeight = result.length > 0 ? result[0].total : 0;
-
     const features = await Feature.find();
+    let matchCount = 0;
 
-    let weightSum = 0;
-    features.map((feature) => {
-      let from_user_preference = from_user.preference[feature.name];
-      let to_user_self = to_user.self[feature.name];
+    // Get user's criteria answers and preferences
+    const fromUserPreference = from_user.preference || {};
+    const toUserPreference = to_user.preference || {};
 
-      //formula for calculating matching score
-      if (from_user_preference.includes(to_user_self))
-        weightSum += feature.weight;
+    // Count how many answers match between users
+    features.forEach(feature => {
+      const questionId = feature._id.toString();
+      if (!fromUserPreference.hasOwnProperty(questionId) || !toUserPreference.hasOwnProperty(questionId)) {
+        return;
+      }
+      const fromUserAnswer = fromUserPreference[questionId];
+      const toUserAnswer = toUserPreference[questionId];
+
+      if (fromUserAnswer === toUserAnswer) {
+        matchCount++;
+      }
     });
 
-    return Math.round((weightSum / totalWeight) * 100);
+    // Calculate percentage of matching answers
+    const totalQuestions = features.length;
+    const matchPercentage = Math.round((matchCount / totalQuestions) * 100);
+
+    return matchPercentage;
   } catch (error) {
     console.log(error.message);
     return 0;

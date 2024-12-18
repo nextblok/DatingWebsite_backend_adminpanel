@@ -9,10 +9,7 @@ const schema = new Schema({
     answers: {
         type: [String],
         required: true
-    },
-    weight: {
-        type: Number
-    },
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('feature', schema);
