@@ -7,6 +7,7 @@ const Chat = require("../models/chat.js");
 const { body, check, validationResult } = require("express-validator");
 const { hashPassword } = require("../utils/authentication");
 const { questionsSeed, usersSeed, criteriaSeed } = require("./seedData");
+const { emitNotificationForChat, emitNotificationForLike } = require("./socketController");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -27,10 +28,7 @@ exports.ping = async (req, res) => {
 
 exports.test = async (req, res) => {
   try {
-    let result = await getMatchingScore(
-      "673e0c0ee958ad6bb46b7afa",
-      "673d5fb2c53e0412c4098216"
-    );
+    let result = "socket connected";
     res.json({ success: true, message: result });
   } catch (error) {
     res
@@ -157,8 +155,10 @@ exports.createLike = async (req, res) => {
     }
 
     await Like.create({ liker: liker_id, likee: likee_id });
-
+    
     res.json({ result: true, message: "done" });
+
+    await emitNotificationForLike(liker_id, likee_id);
   } catch (error) {
     res.status(400).json({ result: false, message: error.message });
   }
