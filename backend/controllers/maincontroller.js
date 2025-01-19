@@ -11,6 +11,7 @@ const {
   emitNotificationForChat,
   emitNotificationForLike,
 } = require("./socketController");
+const { signup, signin, sendEmail } = require("./mailcontroller");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -31,8 +32,8 @@ exports.ping = async (req, res) => {
 
 exports.test = async (req, res) => {
   try {
-    let result = "socket connected";
-    res.json({ success: true, message: result });
+    const result = await signup('illradoicic@gmail.com');
+    res.json(result);
   } catch (error) {
     res
       .status(400)
