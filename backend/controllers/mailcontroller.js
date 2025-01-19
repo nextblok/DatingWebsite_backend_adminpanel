@@ -4,8 +4,8 @@ const { validationResult } = require('express-validator');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'communications_by_Kismet@gmail.com',
-        pass: 'Alpha1Omega'
+        user: 'illradoicic@gmail.com',
+        pass: 'IliupAfree213'
     }
 });
 
