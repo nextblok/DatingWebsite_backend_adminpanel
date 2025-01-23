@@ -15,6 +15,7 @@ const userModel = new Schema({
     type: String,
     enum: ['Male', 'Female', 'Transgender'],
   },
+  zipcode: { type: String },
   bio: { type: String },
   criteria: { type: Object },
   preference: { type: Object },
@@ -26,6 +27,7 @@ const userModel = new Schema({
       return `https://secure.gravatar.com/avatar/${this._id}?s=90&d=identicon`;
     }
   },
+  profilePhotos: [{ type: String }],
   blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'user' }],
 }, { timestamps: true });
 

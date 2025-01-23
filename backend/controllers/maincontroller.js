@@ -11,7 +11,7 @@ const {
   emitNotificationForChat,
   emitNotificationForLike,
 } = require("./socketController");
-const { signup, signin, sendEmail } = require("./mailcontroller");
+const { signupEmail } = require("./mailcontroller");
 
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
@@ -32,7 +32,7 @@ exports.ping = async (req, res) => {
 
 exports.test = async (req, res) => {
   try {
-    const result = await signup('illradoicic@gmail.com');
+    const result = await signupEmail('illradoicic@gmail.com');
     res.json(result);
   } catch (error) {
     res
@@ -219,7 +219,7 @@ exports.getLikees = async (req, res) => {
         return like;
       }));
 
-        
+
     }
 
     res.json({ success: true, data: data });
@@ -269,13 +269,13 @@ const getLikeStatus = async (liker_id, likee_id) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { user_id, fullName, gender, bio, criteria, preference, birthdate } =
+    const { user_id, fullName, gender, bio, criteria, preference, birthdate, zipcode } =
       req.body;
 
     const age = birthdate
       ? Math.floor(
-          (new Date() - new Date(birthdate)) / (365.25 * 24 * 60 * 60 * 1000)
-        )
+        (new Date() - new Date(birthdate)) / (365.25 * 24 * 60 * 60 * 1000)
+      )
       : null;
 
     // Remove null values from the update fields
@@ -287,6 +287,7 @@ exports.updateUser = async (req, res) => {
       bio,
       criteria,
       preference,
+      zipcode
     };
 
     // Filter out null/undefined values
@@ -305,6 +306,7 @@ exports.updateUser = async (req, res) => {
         bio,
         criteria,
         preference,
+        zipcode,
         // preference: {
         //     "675642fbf9873c01577f0c56": 0,
         //     "675642fbf9873c01577f0c57": 1,
@@ -364,6 +366,50 @@ exports.searchUser = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+exports.uploadProfilePictures = async (req, res) => {
+  try {
+    const userId = req.body.user_id;
+    const profilePhotos = req.files;
+
+    if (!userId || !profilePhotos || profilePhotos.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and profile photos are required.",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    let serverURL = req.protocol + '://' + req.get('host');
+
+    // Save the profile photo links to the user's profilePhotos field
+    const profilePhotoLinks = profilePhotos.map(file => serverURL + `/${file.filename}`);
+    user.profilePhotos = profilePhotoLinks;
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Profile photos uploaded successfully.",
+      profilePhotos: profilePhotoLinks,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while uploading the profile photos.",
+    });
+  }
+};
+
+
+
 
 const getMatchingScore = async (from_user_id, to_user_id) => {
   try {

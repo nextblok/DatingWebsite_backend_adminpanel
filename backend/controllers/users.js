@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const jwtDecode = require("jwt-decode");
 const { body, check, validationResult } = require("express-validator");
+const { signupEmail } = require("./mailcontroller");
 
 const {
   createToken,
@@ -9,12 +10,6 @@ const {
 } = require("../utils/authentication");
 
 exports.register = async (req, res) => {
-  const result = validationResult(req);
-  if (!result.isEmpty()) {
-    const errors = result.array({ onlyFirstError: true });
-    return res.status(422).json({ errors });
-  }
-
   try {
     // check if username and email already exist
     const { username, email, password, passwordConfirmation } = req.body;
@@ -34,7 +29,8 @@ exports.register = async (req, res) => {
     });
 
     if (existingUsername) {
-      return res.status(400).json({
+      return res.json({
+        success: false,
         message: "Username already exists.",
       });
     }
@@ -44,16 +40,18 @@ exports.register = async (req, res) => {
     });
 
     if (existingEmail) {
-      return res.status(400).json({
+      return res.json({
+        success: false,
         message: "Email already exists.",
       });
     }
 
     // check if password and confirm password match
     if (password !== passwordConfirmation) {
-      return res
-        .status(422)
-        .json({ message: "Password and confirm password must be same" });
+      return res.json({
+        success: false,
+        message: "Password and confirm password must be same"
+      });
     }
 
     // save
@@ -75,20 +73,25 @@ exports.register = async (req, res) => {
         created,
         profilePhoto,
       };
+      
+      await signupEmail(email);
 
       return res.json({
+        success: true,
         message: "User created!",
         token,
         userInfo,
         expiresAt,
       });
     } else {
-      return res.status(400).json({
+      return res.json({
+        success: false,
         message: "There was a problem creating your account.",
       });
     }
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
+      success: false,
       message: "There was a problem creating your account.",
     });
   }

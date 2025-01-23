@@ -43,6 +43,7 @@ router.post('/login', validateUser, login);
 router.post('/user/get', maincontroller.getUser);
 router.post('/user/update', maincontroller.updateUser);
 router.post('/user/search', maincontroller.searchUser);
+router.post('/user/uploadProfilePictures',  upload.array('profilePicture'),  maincontroller.uploadProfilePictures);
 
 //chat
 router.post('/chat/get', chatcontroller.getChats);
