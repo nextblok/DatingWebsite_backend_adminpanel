@@ -3,6 +3,9 @@ const Like = require("../models/like.js");
 const Feature = require("../models/feature.js");
 const Criteria = require("../models/criteria.js");
 const Chat = require("../models/chat.js");
+const Official = require("../models/official.js");
+const Story = require("../models/story.js");
+
 
 const { body, check, validationResult } = require("express-validator");
 const { hashPassword } = require("../utils/authentication");
@@ -450,3 +453,58 @@ const getMatchingScore = async (from_user_id, to_user_id) => {
     return 0;
   }
 };
+
+//*** official ***//
+exports.createOfficial = async (req, res) => {
+  try {
+    const { user_id, opponent_id } = req.body;
+    const user = await User.findOne({ _id: user_id });
+    const opponent = await User.findOne({ _id: opponent_id });
+    if (!user || !opponent) {
+      return res.json({ success: false, message: "User or opponent not found" });
+    }
+    const existingOfficial = await Official.findOne({ user: user_id, opponent: opponent_id });
+    if (existingOfficial) {
+      return res.json({ success: false, message: "Official already exists" });
+    }
+    await Official.create({ user: user_id, opponent: opponent_id });
+
+    const reverseOfficial = await Official.findOne({ user: opponent_id, opponent: user_id });
+    if (reverseOfficial) {
+      await Story.create({
+        user1_id: user_id,
+        user2_id: opponent_id,
+        user1_photo: user.profilePhoto,
+        user2_photo: opponent.profilePhoto,
+        user1_name: user.fullName,
+        user2_name: opponent.fullName,
+      });
+    }
+    res.json({ success: true, message: "done" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.getOfficial = async (req, res) => {
+  try {
+    const { user_id, opponent_id } = req.body;
+    const official = await Official.findOne({ user: user_id, opponent: opponent_id });
+    if (!official) {
+      return res.json({ success: false, message: "Official not found" });
+    }
+    res.json({ success: true, data: official });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.getStory = async (req, res) => { 
+  try {
+    const stories = await Story.find({});
+    res.json({ success: true, data: stories });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+}
+

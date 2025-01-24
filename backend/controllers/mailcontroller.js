@@ -1,22 +1,13 @@
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 
-// const transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: 'illradoicic@gmail.com',
-//         pass: 'IliupAfree213'
-//     }
-// });
-
-
 const transporter = nodemailer.createTransport({
-    host: 'smtp-broadcasts.postmarkapp.com', // Replace with your SMTP server host
+    host: 'smtp.mailgun.org', // Replace with your SMTP server host
     port: 587, // Replace with your SMTP server port
     secure: false, // true for 465, false for other ports
     auth: {
-        user: '8f9d269e-3a1a-407a-9a00-23ff6b4ba474',
-        pass: '8f9d269e-3a1a-407a-9a00-23ff6b4ba474'
+        user: 'postmaster@sandbox015756b4c7cd400fbc4b737d1a87bdaa.mailgun.org',
+        pass: 'ProjectLegacy01Alpha1'
     }
 });
 

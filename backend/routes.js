@@ -57,6 +57,13 @@ router.post('/like/delete', maincontroller.deleteLike);
 router.post('/like/get/likers', maincontroller.getLikers);
 router.post('/like/get/likees', maincontroller.getLikees);
 
+//official
+router.post('/official/create', maincontroller.createOfficial);
+router.post('/official/get', maincontroller.getOfficial);
+
+// //story
+router.post('/story/get', maincontroller.getStory);
+
 //users
 router.get('/users', listUsers);
 router.get('/users/:search', search);
