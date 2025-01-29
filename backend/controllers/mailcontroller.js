@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
     port: 587, // Replace with your SMTP server port
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'postmaster@sandbox015756b4c7cd400fbc4b737d1a87bdaa.mailgun.org',
-        pass: 'ProjectLegacy01Alpha1'
+        user: 'postmaster@clubkismet.com',
+        pass: '2a1015e5ad390e79363b4f6ea4138dd7-d8df908e-bb082c85'
     }
 });
 
