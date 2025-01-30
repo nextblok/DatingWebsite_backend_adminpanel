@@ -6,7 +6,7 @@ const { emitNotificationForChat } = require("./controllers/socketController");
 const server = http.createServer();
 global.io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://192.168.148.178:3000", "http://104.236.35.101", "http://95.164.0.156:3000"], // Allow these origins
+    origin: ["http://localhost:3000", "http://192.168.148.178:3000", "https://www.clubkismet.com", "https://clubkismet.com", "http://95.164.0.156:3000"], // Allow these origins
     // origin: ["*"], // Allow these origins
     methods: ["GET", "POST"], // Allow these HTTP methods
     allowedHeaders: ["my-custom-header"], // Optional: Specify allowed headers
