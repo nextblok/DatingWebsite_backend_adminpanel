@@ -374,6 +374,49 @@ exports.searchUser = async (req, res) => {
   }
 };
 
+exports.searchByDistance = async (req, res) => {
+  try {
+    const { userId, distance } = req.body;
+
+    if (!userId || !distance) {
+      return res.status(400).json({ success: false, message: "User ID and distance are required." });
+    }
+
+    const currentUser = await User.findById(userId);
+    if (!currentUser || !currentUser.lat || !currentUser.lng) {
+      return res.status(404).json({ success: false, message: "Current user's location not found." });
+    }
+
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+
+    const users = await User.find({
+      role: "user",
+      lat: { $exists: true },
+      lng: { $exists: true },
+      _id: { $ne: userId }, // Exclude the current user
+    }).then(users => {
+      return users.filter(user => {
+        const userLatRad = toRadians(user.lat);
+        const userLngRad = toRadians(user.lng);
+        const currentUserLatRad = toRadians(currentUser.lat);
+        const currentUserLngRad = toRadians(currentUser.lng);
+
+        const distanceInMiles = 3959 * Math.acos(
+          Math.sin(userLatRad) * Math.sin(currentUserLatRad) +
+          Math.cos(userLatRad) * Math.cos(currentUserLatRad) *
+          Math.cos(currentUserLngRad - userLngRad)
+        );
+
+        return distanceInMiles <= distance;
+      });
+    });
+ 
+    res.json({ success: true, data: users });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+}
+
 exports.uploadProfilePictures = async (req, res) => {
   try {
     const userId = req.body.user_id;
