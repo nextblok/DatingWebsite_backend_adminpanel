@@ -15,6 +15,8 @@ const userModel = new Schema({
     type: String,
     enum: ['Male', 'Female', 'Transgender'],
   },
+  lat: { type: Number },
+  lng: { type: Number },
   zipcode: { type: String },
   bio: { type: String },
   criteria: { type: Object },

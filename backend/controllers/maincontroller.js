@@ -272,7 +272,7 @@ const getLikeStatus = async (liker_id, likee_id) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { user_id, fullName, gender, bio, criteria, preference, birthdate, zipcode } =
+    const { user_id, fullName, gender, bio, criteria, preference, birthdate, zipcode, lat, lng } =
       req.body;
 
     const age = birthdate
@@ -290,7 +290,9 @@ exports.updateUser = async (req, res) => {
       bio,
       criteria,
       preference,
-      zipcode
+      zipcode,
+      lat,
+      lng
     };
 
     // Filter out null/undefined values
@@ -310,6 +312,8 @@ exports.updateUser = async (req, res) => {
         criteria,
         preference,
         zipcode,
+        lat,
+        lng,
         // preference: {
         //     "675642fbf9873c01577f0c56": 0,
         //     "675642fbf9873c01577f0c57": 1,
